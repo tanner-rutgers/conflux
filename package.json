@@ -1,0 +1,19 @@
+{
+  "name": "popcorn-api",
+  "version": "1.0.0",
+  "description": "REST API for Popcorn backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tannner/popcorn-api.git"
+  },
+  "author": "Tanner Rutgers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tannner/popcorn-api/issues"
+  },
+  "homepage": "https://github.com/tannner/popcorn-api#readme"
+}
