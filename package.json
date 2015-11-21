@@ -1,9 +1,9 @@
 {
   "name": "popcorn-api",
   "version": "1.0.0",
-  "description": "REST API for Popcorn backend",
-  "main": "server.js",
+  "private": true,
   "scripts": {
+    "start": "node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/tannner/popcorn-api/issues"
   },
-  "homepage": "https://github.com/tannner/popcorn-api#readme"
+  "homepage": "https://github.com/tannner/popcorn-api#readme",
+  "dependencies": {
+    "express": "~4.13.1"
+  }
 }
