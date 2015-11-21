@@ -1,11 +1,20 @@
 var winston = require('winston');
-winston.emitErrs = true;
+var fs = require('fs');
 
+var LOG_DIR = './logs';
+
+// Create log dir if doesn't exist
+if (!fs.existsSync(LOG_DIR) ) {
+    fs.mkdirSync(LOG_DIR);
+}
+
+// Set up winston logger
+winston.emitErrs = true;
 var logger = new winston.Logger({
     transports: [
         new winston.transports.File({
             level: 'info',
-            filename: './logs/app_log.log',
+            filename: LOG_DIR + '/app_log.log',
             handleExceptions: true,
             json: true,
             maxsize: 5242880, // 5MB
@@ -24,7 +33,7 @@ var logger = new winston.Logger({
 
 module.exports = logger;
 module.exports.stream = {
-    write: function(message, encoding){
-        logger.info(message, encoding);
+    write: function(message){
+        logger.info(message.slice(0, -1));
     }
 };
