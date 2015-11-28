@@ -13,7 +13,7 @@ app.use(morgan('[:date[web]] :method url: :url, content-type: :res[content-type]
 
 // Routes setup
 logger.info("Configuring routes");
-var apiRouter = require('./routes/api')(express);
+var apiRouter = require('./routes/api');
 app.use('/api', apiRouter);
 
 module.exports = app;
