@@ -1,5 +1,5 @@
 {
-  "name": "popcorn-api",
+  "name": "conflux",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tannner/popcorn-api.git"
+    "url": "git+https://github.com/tannner/conflux.git"
   },
   "author": "Tanner Rutgers",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tannner/popcorn-api/issues"
+    "url": "https://github.com/tannner/conflux/issues"
   },
-  "homepage": "https://github.com/tannner/popcorn-api#readme",
+  "homepage": "https://github.com/tannner/conflux#readme",
   "dependencies": {
     "express": "~4.13.1",
     "morgan": "^1.6.1",
