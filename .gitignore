@@ -1,6 +1,5 @@
 # Logs
 logs
-*.log
 
 # Runtime data
 pids
@@ -27,5 +26,4 @@ build/Release
 node_modules
 
 # IntelliJ files
-.idea/
-*.iml
+.idea
