@@ -1,12 +1,16 @@
 import sys
 import logging
 import time
+import os
 
-import guidebox_api
+from guidebox import guidebox_api
 
 
 class GuideboxHelper:
     """Helper class for retrieving data from Guidebox API"""
+
+    __DIR = os.path.dirname(os.path.abspath(__file__))
+    __TIMESTAMP_FILENAME = os.path.join(__DIR, 'current_timestamp.txt')
 
     logger = logging.getLogger(__name__)
 
@@ -19,14 +23,11 @@ class GuideboxHelper:
         :param max_count: Max number of movies to fetch (optional)
         :return: List of movie dicts
         """
-        max_desc = str(max_count)
-        if max_count is None:
-            max_count = sys.maxint
-            max_desc = 'all'
-        self.logger.info('Retrieving %s movies from Guidebox', max_desc)
+        self.logger.info('GuideboxHelper get_all_movies (max_count=%d)')
+        self.update_timestamp()
         index = 0
         all_movies = []
-        while index < max_count:
+        while max_count is None or index < max_count:
             response = self.guidebox.get_movies(index, 250)
             movies = response['results']
             for result in movies:
@@ -47,6 +48,7 @@ class GuideboxHelper:
         :param movie_id: Guidebox ID of movie to retrieve
         :return: Dict describing movie
         """
+        self.logger.info('GuideboxHelper get_movie: %d', movie_id)
         movie_data = self.guidebox.get_movie(movie_id)
         genres = ",".join([genre['title'] for genre in movie_data['genres']])
         movie = {
@@ -64,3 +66,10 @@ class GuideboxHelper:
         }
         return movie
 
+    def update_timestamp(self):
+        self.logger.info('GuideboxHelper update_timestamp')
+        """Retrieve and store the current UNIX timestamp from Guidebox"""
+        timestamp = self.guidebox.get_timestamp()['results']
+        f = open(self.__TIMESTAMP_FILENAME, 'w')
+        self.logger.info('Writing timestamp (%d) to file (%s)', timestamp, f.name)
+        print(timestamp, file=f)

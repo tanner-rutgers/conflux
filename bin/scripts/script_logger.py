@@ -1,4 +1,5 @@
 import logging
+import os
 
 __author__ = 'Tanner Rutgers'
 
@@ -6,7 +7,8 @@ import os
 import json
 import logging.config
 
-__DEFAULT_CFG_PATH = 'script_logger_config.json'
+__DIR = os.path.dirname(os.path.abspath(__file__))
+__DEFAULT_CFG_PATH = os.path.join(__DIR, 'script_logger_config.json')
 __DEFAULT_LOG_LEVEL = logging.INFO
 __ENV_KEY = 'LOG_CFG'
 
