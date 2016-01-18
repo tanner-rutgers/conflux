@@ -27,7 +27,6 @@ node_modules
 
 # IntelliJ files
 .idea
-.idea/*
 
 # Python files
 *.pyc
