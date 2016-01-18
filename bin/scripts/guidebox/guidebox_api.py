@@ -2,7 +2,7 @@ import requests
 import logging
 
 
-class Guidebox:
+class GuideboxAPI:
     """Used to fetch data from the Guidebox API"""
 
     __INDEX_NAME = 'conflux'
@@ -29,27 +29,13 @@ class Guidebox:
             response.raise_for_status()
 
     def get_movie(self, id):
-        url = '/'.join([self.__GUIDEBOX_BASE_PATH, 'movie', str(id)])
+        url = '/'.join([self.__GUIDEBOX_MOVIE_PATH, str(id)])
         self.logger.info('GET %s', url)
         response = requests.get(url)
         if response.ok:
             movie_data = response.json()
-            genres = ",".join([genre['title'] for genre in movie_data['genres']])
-            movie = {
-                "id": id,
-                "title": movie_data['title'],
-                "release_year": movie_data['release_year'],
-                "imdb": movie_data['imdb'],
-                "release_date": movie_data['release_date'],
-                "rating": movie_data['rating'],
-                "overview": movie_data['overview'],
-                "poster_small": movie_data['poster_120x171'],
-                "poster_medium": movie_data['poster_240x342'],
-                "poster_large": movie_data['poster_400x570'],
-                "genres": genres
-            }
-            self.logger.info('Successfully retrieved movie %s: %s', movie['id'], movie['title'])
-            return movie
+            self.logger.info('Successfully retrieved movie %s: %s', movie_data['id'], movie_data['title'])
+            return movie_data
         else:
             self.logger.error('Error retrieving movie %s', id)
             response.raise_for_status()
