@@ -27,15 +27,15 @@ class GuideboxHelper:
         self.update_timestamp()
         index = 0
         all_movies = []
-        while max_count is None or index < max_count:
+        while max_count is None or index < int(max_count):
             response = self.guidebox.get_movies(index, 250)
             movies = response['results']
             for result in movies:
                 movie = self.get_movie(result['id'])
                 all_movies.append(movie)
                 time.sleep(1)
-            total_returned = movies['total_returned']
-            total_results = movies['total_results']
+            total_returned = response['total_returned']
+            total_results = response['total_results']
             index += total_returned
             if index > total_results:
                 break
@@ -51,7 +51,10 @@ class GuideboxHelper:
         """
         self.logger.info('GuideboxHelper get_movie: %d', movie_id)
         movie_data = self.guidebox.get_movie(movie_id)
-        genres = ",".join([genre['title'] for genre in movie_data['genres']])
+        genres = [genre['title'] for genre in movie_data['genres']]
+        writers = [writer['name'] for writer in movie_data['writers']]
+        directors = [director['name'] for director in movie_data['directors']]
+        cast = [{"name": cast['name'], "character": cast['character_name']} for cast in movie_data['cast']]
         movie = {
             "id": movie_id,
             "title": movie_data['title'],
@@ -63,7 +66,13 @@ class GuideboxHelper:
             "poster_small": movie_data['poster_120x171'],
             "poster_medium": movie_data['poster_240x342'],
             "poster_large": movie_data['poster_400x570'],
-            "genres": genres
+            "genres": genres,
+            "duration": movie_data['duration'],
+            "writers": writers,
+            "directors": directors,
+            "cast": cast,
+            "free_web_sources": movie_data['free_web_sources'],
+            "subscription_web_sources": movie_data['subscription_web_sources']
         }
         return movie
 
