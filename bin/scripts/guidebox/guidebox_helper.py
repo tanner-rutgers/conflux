@@ -53,6 +53,7 @@ class GuideboxHelper:
         writers = [writer['name'] for writer in movie_data['writers']]
         directors = [director['name'] for director in movie_data['directors']]
         cast = [{"name": cast['name'], "character": cast['character_name']} for cast in movie_data['cast']]
+        sources = movie_data['free_web_sources'] + movie_data['subscription_web_sources']
         movie = {
             "id": movie_id,
             "title": movie_data['title'],
@@ -69,8 +70,7 @@ class GuideboxHelper:
             "writers": writers,
             "directors": directors,
             "cast": cast,
-            "free_web_sources": movie_data['free_web_sources'],
-            "subscription_web_sources": movie_data['subscription_web_sources']
+            "sources": sources
         }
         self.logger.info('Succesfully retrieved movie %d: %s', movie_id, movie['title'])
         return movie
