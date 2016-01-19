@@ -72,6 +72,7 @@ class GuideboxHelper:
             "free_web_sources": movie_data['free_web_sources'],
             "subscription_web_sources": movie_data['subscription_web_sources']
         }
+        self.logger.info('Succesfully retrieved movie %d: %s', movie_id, movie['title'])
         return movie
 
     def get_all_updates(self):
@@ -96,6 +97,7 @@ class GuideboxHelper:
         new_movies = []
         response = self.guidebox.get_new_movies(since)
         results = response['results']
+        self.logger.info('%d new movies', len(results))
         for result in results:
             movie = self.get_movie(result['id'])
             new_movies.append(movie)
@@ -111,6 +113,7 @@ class GuideboxHelper:
         changed_movies = []
         response = self.guidebox.get_movie_changes(since)
         results = response['results']
+        self.logger.info('%d updated movies', len(results))
         for result in results:
             movie = self.get_movie(result['id'])
             changed_movies.append(movie)
@@ -126,6 +129,7 @@ class GuideboxHelper:
         latest_timestamp = self.get_latest_timestamp()
         response = self.guidebox.get_deleted_movies(latest_timestamp)
         results = response['results']
+        self.logger.info('%d deleted movies', len(results))
         for result in results:
             deleted_movies.append(result['id'])
         return deleted_movies

@@ -37,7 +37,6 @@ class GuideboxAPI:
     def make_request(self, url):
         """Makes a GET request to the given URL after 1 second pause, logging success and error"""
         time.sleep(1) # Guidebox enforces 1 call per second
-        self.logger.info("GET %s", url)
         response = requests.get(url)
         if response.ok:
             self.logger.info("GET %s SUCCESS", url)
@@ -45,7 +44,6 @@ class GuideboxAPI:
         else:
             self.logger.error("GET %S FAILED", url)
             response.raise_for_status()
-
 
     def get_timestamp(self):
         """Retrieve the current UNIX timestamp from Guidebox"""
