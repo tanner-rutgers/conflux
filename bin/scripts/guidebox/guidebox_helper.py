@@ -33,6 +33,7 @@ class GuideboxHelper:
             for result in movies:
                 movie = self.get_movie(result['id'])
                 all_movies.append(movie)
+                time.sleep(1)
             total_returned = movies['total_returned']
             total_results = movies['total_results']
             index += total_returned
@@ -66,10 +67,82 @@ class GuideboxHelper:
         }
         return movie
 
+    def get_all_updates(self):
+        """
+        Retrieves new and updated movies from Guidebox since latest update
+        :return: List of updated/new movie dicts
+        """
+        self.logger.info('GuideboxHelper get_all_updates')
+        latest_timestamp = self.get_latest_timestamp()
+        self.update_timestamp()
+        all_updates = self.get_new_movies(latest_timestamp)
+        all_updates = all_updates + self.get_changed_movies(latest_timestamp)
+        return all_updates
+
+    def get_new_movies(self, since):
+        """
+        Retrieves new movies since 'since' timestamp
+        :param since: UNIX timestamp of latest update from Guidebox
+        :return: List of movie dicts
+        """
+        self.logger.info('GuideboxHelper get_new_movies (since: %s)', since)
+        time.sleep(1)
+        new_movies = []
+        response = self.guidebox.get_new_movies(since)
+        results = response['results']
+        for result in results:
+            movie = self.get_movie(result['id'])
+            new_movies.append(movie)
+            time.sleep(1)
+        return new_movies
+
+    def get_changed_movies(self, since):
+        """
+        Retrieves updated movies since 'since' timestamp
+        :param since: UNIX timestamp of latest update from Guidebox
+        :return: List of movie dicts
+        """
+        self.logger.info('GuideboxHelper get_changed_movies (since: %s)', since)
+        time.sleep(1)
+        changed_movies = []
+        response = self.guidebox.get_movie_changes(since)
+        results = response['results']
+        for result in results:
+            movie = self.get_movie(result['id'])
+            changed_movies.append(movie)
+            time.sleep(1)
+        return changed_movies
+
+    def get_deleted_movies(self):
+        """
+        Retrieves list of IDs of deleted movies since latest update
+        :return: List of movie IDs
+        """
+        self.logger.info('GuideboxHelper get_deleted_movies')
+        time.sleep(1)
+        deleted_movies = []
+        latest_timestamp = self.get_latest_timestamp()
+        response = self.guidebox.get_deleted_movies(latest_timestamp)
+        results = response['results']
+        for result in results:
+            deleted_movies.append(result['id'])
+        return deleted_movies
+
+    def get_latest_timestamp(self):
+        """Retrieve the latest stored timestamp"""
+        self.logger.info('GuideboxHelper get_latest_timestamp')
+        if os.path.isfile(self.__TIMESTAMP_FILENAME):
+            with open(self.__TIMESTAMP_FILENAME, 'r') as f:
+                return f.readline().strip()
+        else:
+            self.logger.error('Timestamp file does not exist: %s', self.__TIMESTAMP_FILENAME)
+            raise FileNotFoundError()
+
     def update_timestamp(self):
-        self.logger.info('GuideboxHelper update_timestamp')
         """Retrieve and store the current UNIX timestamp from Guidebox"""
+        time.sleep(1)
+        self.logger.info('GuideboxHelper update_timestamp')
         timestamp = self.guidebox.get_timestamp()['results']
-        f = open(self.__TIMESTAMP_FILENAME, 'w')
-        self.logger.info('Writing timestamp (%d) to file (%s)', timestamp, f.name)
-        print(timestamp, file=f)
+        with open(self.__TIMESTAMP_FILENAME, 'w') as f:
+            self.logger.info('Writing timestamp (%d) to file (%s)', timestamp, f.name)
+            print(timestamp, file=f)

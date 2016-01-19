@@ -27,6 +27,7 @@ class ConfluxElasticsearch:
         :param movies: List of movies dicts to index
         :return: None
         """
+        self.logger.info('ConfluxElasticsearch bulk_index_movies (%d movies)', len(movies))
         bulk_request = []
         for movie in movies:
             operation = {
@@ -38,4 +39,22 @@ class ConfluxElasticsearch:
             }
             bulk_request.append(operation)
             bulk_request.append(movie)
-        self.es.bulk(index=self.__INDEX_NAME, body=bulk_request, refresh=True)
+        if len(bulk_request) > 0:
+            self.es.bulk(index=self.__INDEX_NAME, body=bulk_request, refresh=True)
+
+    def delete_movies(self, movie_ids):
+        """
+        Removes all movies with the given 'movie_ids' from elasticsearch index
+        :return: None
+        """
+        self.logger.info('ConfluxElasticsearch delete_movies (%d movies)', len(movie_ids))
+        bulk_request = []
+        for movie_id in movie_ids:
+            operation = {
+                "delete": {
+                    "_id": movie_id
+                }
+            }
+            bulk_request.append(operation)
+        if len(bulk_request) > 0:
+            self.es.bulk(index=self.__INDEX_NAME, body=bulk_request, refresh=True)

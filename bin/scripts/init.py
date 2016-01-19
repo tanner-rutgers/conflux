@@ -10,7 +10,6 @@ __SCRIPT_DESCRIPTION = 'Script to freshly populate all movies from Guidebox'
 
 
 def main(args):
-    """Clears and repopulates Elasticsearch instance with all movies from Guidebox"""
     print('WARNING: This will delete entire Conflux index and repopulate.')
     proceed = input("Are you sure you want to proceed? (y/n): ")
     if proceed.lower() == 'y':

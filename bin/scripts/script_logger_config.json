@@ -36,8 +36,26 @@
     }
   },
 
-  "root": {
-    "level": "INFO",
-    "handlers": ["console", "info_file_handler", "error_file_handler"]
+  "loggers": {
+    "conflux": {
+      "level": "INFO",
+      "handlers": ["console", "info_file_handler", "error_file_handler"],
+      "propagate": "no"
+    },
+    "guidebox": {
+      "level": "INFO",
+      "handlers": ["console", "info_file_handler", "error_file_handler"],
+      "propagate": "no"
+    },
+    "elasticsearch": {
+      "level": "WARN",
+      "handlers": ["console", "info_file_handler", "error_file_handler"],
+      "propagate": "no"
+    },
+    "__main__": {
+      "level": "INFO",
+      "handlers": ["console", "info_file_handler", "error_file_handler"],
+      "propagate": "no"
+    }
   }
 }
