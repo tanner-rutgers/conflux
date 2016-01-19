@@ -1,5 +1,6 @@
 import requests
 import logging
+import time
 
 
 class GuideboxAPI:
@@ -33,16 +34,23 @@ class GuideboxAPI:
 
     logger = logging.getLogger(__name__)
 
+    def make_request(self, url):
+        """Makes a GET request to the given URL after 1 second pause, logging success and error"""
+        time.sleep(1) # Guidebox enforces 1 call per second
+        self.logger.info("GET %s", url)
+        response = requests.get(url)
+        if response.ok:
+            self.logger.info("GET %s SUCCESS", url)
+            return response.json()
+        else:
+            self.logger.error("GET %S FAILED", url)
+            response.raise_for_status()
+
+
     def get_timestamp(self):
         """Retrieve the current UNIX timestamp from Guidebox"""
         self.logger.info('Guidebox get_timestamp')
-        self.logger.info('GET %s', self.__GUIDEBOX_TIME_PATH)
-        response = requests.get(self.__GUIDEBOX_TIME_PATH)
-        if response.ok:
-            return response.json()
-        else:
-            self.logger.error('Error retrieving timestamp')
-            response.raise_for_status()
+        return self.make_request(self.__GUIDEBOX_TIME_PATH)
 
     def get_movies(self, start, size):
         """
@@ -53,15 +61,7 @@ class GuideboxAPI:
         """
         self.logger.info('Guidebox get_movies %d-%d (%d movies)', start, start + size, size)
         url = GuideboxAPI.get_url(self.__GUIDEBOX_MOVIES_ALL_PATH, str(start), str(size))
-        self.logger.info("GET %s", url)
-        response = requests.get(url)
-        if response.ok:
-            movies = response.json()
-            self.logger.info('Successfully retrieved %d movies', movies['total_returned'])
-            return movies
-        else:
-            self.logger.error('Guidebox movies call failure. Response: %s', response)
-            response.raise_for_status()
+        return self.make_request(url)
 
     def get_movie(self, movie_id):
         """
@@ -71,15 +71,7 @@ class GuideboxAPI:
         """
         self.logger.info('Guidebox get_movie: %d', movie_id)
         url = GuideboxAPI.get_url(self.__GUIDEBOX_MOVIE_PATH, str(movie_id))
-        self.logger.info('GET %s', url)
-        response = requests.get(url)
-        if response.ok:
-            movie_data = response.json()
-            self.logger.info('Successfully retrieved movie %s: %s', movie_data['id'], movie_data['title'])
-            return movie_data
-        else:
-            self.logger.error('Error retrieving movie %s. Response: %s', movie_id, response)
-            response.raise_for_status()
+        return self.make_request(url)
 
     def get_movie_changes(self, since):
         """
@@ -89,16 +81,7 @@ class GuideboxAPI:
         """
         self.logger.info('Guidebox get_movie_changes (since: %s)', since)
         url = GuideboxAPI.get_url(self.__GUIDEBOX_MOVIES_CHANGES_PATH, since)
-        self.logger.info('GET %s', url)
-        response = requests.get(url)
-        if response.ok:
-            movie_changes = response.json()
-            self.logger.info('Successfully retrieved %d of %d movie changes', movie_changes['total_returned'],
-                             movie_changes['total_results'])
-            return movie_changes
-        else:
-            self.logger.error('Error retrieving movie changes. Response: %s', response)
-            response.raise_for_status()
+        return self.make_request(url)
 
     def get_new_movies(self, since):
         """
@@ -108,16 +91,7 @@ class GuideboxAPI:
         """
         self.logger.info('Guidebox get_new_movies (since: %s)', since)
         url = GuideboxAPI.get_url(self.__GUIDEBOX_NEW_MOVIES_PATH, since)
-        self.logger.info('GET %s', url)
-        response = requests.get(url)
-        if response.ok:
-            new_movies = response.json()
-            self.logger.info('Successfully retrieved %d of %d new movies', new_movies['total_returned'],
-                             new_movies['total_results'])
-            return new_movies
-        else:
-            self.logger.error('Error retrieving new movies. Response: %s', response)
-            response.raise_for_status()
+        return self.make_request(url)
 
     def get_deleted_movies(self, since):
         """
@@ -127,13 +101,4 @@ class GuideboxAPI:
         """
         self.logger.info('Guidebox get_deleted_movies (since: %s)', since)
         url = GuideboxAPI.get_url(self.__GUIDEBOX_DELETED_MOVIES_PATH, since)
-        self.logger.info('GET %s', url)
-        response = requests.get(url)
-        if response.ok:
-            deleted_movies = response.json()
-            self.logger.info('Successfully retrieved %d of %d new movies', deleted_movies['total_returned'],
-                             deleted_movies['total_results'])
-            return deleted_movies
-        else:
-            self.logger.error('Error retrieving deleted movies. Response: %s', response)
-            response.raise_for_status()
+        return self.make_request(url)

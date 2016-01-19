@@ -33,13 +33,11 @@ class GuideboxHelper:
             for result in movies:
                 movie = self.get_movie(result['id'])
                 all_movies.append(movie)
-                time.sleep(1)
             total_returned = response['total_returned']
             total_results = response['total_results']
             index += total_returned
             if index > total_results:
                 break
-            time.sleep(1)
         return all_movies
 
     def get_movie(self, movie_id):
@@ -95,14 +93,12 @@ class GuideboxHelper:
         :return: List of movie dicts
         """
         self.logger.info('GuideboxHelper get_new_movies (since: %s)', since)
-        time.sleep(1)
         new_movies = []
         response = self.guidebox.get_new_movies(since)
         results = response['results']
         for result in results:
             movie = self.get_movie(result['id'])
             new_movies.append(movie)
-            time.sleep(1)
         return new_movies
 
     def get_changed_movies(self, since):
@@ -112,14 +108,12 @@ class GuideboxHelper:
         :return: List of movie dicts
         """
         self.logger.info('GuideboxHelper get_changed_movies (since: %s)', since)
-        time.sleep(1)
         changed_movies = []
         response = self.guidebox.get_movie_changes(since)
         results = response['results']
         for result in results:
             movie = self.get_movie(result['id'])
             changed_movies.append(movie)
-            time.sleep(1)
         return changed_movies
 
     def get_deleted_movies(self):
@@ -128,7 +122,6 @@ class GuideboxHelper:
         :return: List of movie IDs
         """
         self.logger.info('GuideboxHelper get_deleted_movies')
-        time.sleep(1)
         deleted_movies = []
         latest_timestamp = self.get_latest_timestamp()
         response = self.guidebox.get_deleted_movies(latest_timestamp)
@@ -149,7 +142,6 @@ class GuideboxHelper:
 
     def update_timestamp(self):
         """Retrieve and store the current UNIX timestamp from Guidebox"""
-        time.sleep(1)
         self.logger.info('GuideboxHelper update_timestamp')
         timestamp = self.guidebox.get_timestamp()['results']
         with open(self.__TIMESTAMP_FILENAME, 'w') as f:
