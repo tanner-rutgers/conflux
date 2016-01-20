@@ -45,7 +45,7 @@ MoviesController.prototype.searchAll = function(queryString, filters, from, size
     this.elasticsearchController.search(search_body, from, size, function(err, res) {
         if (err) {
             logger.error("Error performing searchAll", err);
-            callback(err);
+            return callback(err);
         }
 
         var results = res.hits.hits.map(function(hit) {

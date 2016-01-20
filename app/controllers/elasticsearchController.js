@@ -23,7 +23,6 @@ function ElasticsearchController() {
  * @param callback Typical callback function(err, res) - res will contain the unmodified elasticsearch response
  */
 ElasticsearchController.prototype.search = function(search_body, from, size, callback) {
-    logger.info("Sending %j search to elasticsearch", search_body, {});
     var search_config = {
         index: INDEX,
         type: TYPE,
@@ -31,10 +30,11 @@ ElasticsearchController.prototype.search = function(search_body, from, size, cal
         size: size || SIZE_DEFAULT,
         body: search_body
     };
+    logger.info("Sending %j search to elasticsearch", search_config, {});
     this.client.search(search_config, function(err, res) {
         if (err) {
             logger.error("Error performing search", err);
-            callback(err);
+            return callback(err);
         }
 
         callback(null, res);
