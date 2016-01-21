@@ -1,4 +1,6 @@
 import logging
+import json
+import os
 from elasticsearch import Elasticsearch
 
 
@@ -7,6 +9,8 @@ class ConfluxElasticsearch:
 
     __INDEX_NAME = 'conflux'
     __TYPE_MOVIES = 'movies'
+    __DIR = os.path.dirname(os.path.abspath(__file__))
+    __MAPPINGS_FILENAME = os.path.join(__DIR, 'mappings.json')
 
     logger = logging.getLogger(__name__)
 
@@ -14,11 +18,21 @@ class ConfluxElasticsearch:
         self.es = Elasticsearch()
 
     def clear_index(self):
-        """Deletes the elasticsearch index"""
+        """Deletes the conflux index"""
         if self.es.indices.exists(self.__INDEX_NAME):
             self.logger.info("deleting '%s' index...", self.__INDEX_NAME)
             res = self.es.indices.delete(index=self.__INDEX_NAME)
-            self.logger.info("deletion response: %s", res)
+            self.logger.info("deletion result: %s", res)
+        else:
+            self.logger.info("index '%s' does not exist, skipping delete", self.__INDEX_NAME)
+
+    def create_index(self):
+        """Creates the conflux index and with necessary mappings"""
+        with open(self.__MAPPINGS_FILENAME) as mapping_json:
+            mapping = json.load(mapping_json)
+        self.logger.info("creating index '%s' with: %s", self.__INDEX_NAME, mapping)
+        res = self.es.indices.create(index=self.__INDEX_NAME, body=mapping)
+        self.logger.info("index creation result: %s", res)
 
     def bulk_index_movies(self, movies):
         """
@@ -40,7 +54,8 @@ class ConfluxElasticsearch:
             bulk_request.append(operation)
             bulk_request.append(movie)
         if len(bulk_request) > 0:
-            self.es.bulk(index=self.__INDEX_NAME, body=bulk_request, refresh=True)
+            res = self.es.bulk(index=self.__INDEX_NAME, body=bulk_request, refresh=True)
+            self.logger.info('Bulk index of movies result: %s', res)
 
     def delete_movies(self, movie_ids):
         """

@@ -21,6 +21,7 @@ def main(args):
 def populate_all_movies(max_movies):
     db = conflux_elasticsearch.ConfluxElasticsearch()
     db.clear_index()
+    db.create_index()
     guidebox = guidebox_helper.GuideboxHelper()
     movies = guidebox.get_all_movies(max_movies)
     db.bulk_index_movies(movies)

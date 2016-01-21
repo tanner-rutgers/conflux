@@ -1,0 +1,85 @@
+{
+  "mappings": {
+    "movies": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "imdb": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "title": {
+          "type": "string"
+        },
+        "release_year": {
+          "type": "date",
+          "format": "yyyy"
+        },
+        "release_date": {
+          "type": "date",
+          "format": "yyyy-MM-dd"
+        },
+        "rating": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "overview": {
+          "type": "string",
+          "analyzer": "english"
+        },
+        "poster_small": {
+          "type": "string",
+          "index": "no"
+        },
+        "poster_medium": {
+          "type": "string",
+          "index": "no"
+        },
+        "poster_large": {
+          "type": "string",
+          "index": "no"
+        },
+        "genres": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "writers": {
+          "type": "string",
+          "fields": {
+            "raw": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "directors": {
+          "type": "string",
+          "fields": {
+            "raw": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "cast": {
+          "type": "string",
+          "fields": {
+            "raw": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "sources": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
