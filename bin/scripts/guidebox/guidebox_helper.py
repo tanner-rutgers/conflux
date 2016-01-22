@@ -53,24 +53,32 @@ class GuideboxHelper:
         writers = [writer['name'] for writer in movie_data['writers']]
         directors = [director['name'] for director in movie_data['directors']]
         cast = [{"name": cast['name'], "character": cast['character_name']} for cast in movie_data['cast']]
-        sources = movie_data['free_web_sources'] + movie_data['subscription_web_sources']
+        web_sources = movie_data['free_web_sources'] + movie_data['tv_everywhere_web_sources'] + \
+                      movie_data['subscription_web_sources'] + movie_data['purchase_web_sources']
+        ios_sources = movie_data['free_ios_sources'] + movie_data['tv_everywhere_ios_sources'] + \
+                      movie_data['subscription_ios_sources'] + movie_data['purchase_ios_sources']
+        android_sources = movie_data['free_android_sources'] + movie_data['tv_everywhere_android_sources'] + \
+                      movie_data['subscription_android_sources'] + movie_data['purchase_android_sources']
         movie = {
             "id": movie_id,
-            "title": movie_data['title'],
-            "release_year": movie_data['release_year'],
             "imdb": movie_data['imdb'],
+            "title": movie_data['title'],
+            "overview": movie_data['overview'],
+            "release_year": movie_data['release_year'],
             "release_date": movie_data['release_date'],
             "rating": movie_data['rating'],
-            "overview": movie_data['overview'],
-            "poster_small": movie_data['poster_120x171'],
-            "poster_medium": movie_data['poster_240x342'],
-            "poster_large": movie_data['poster_400x570'],
-            "genres": genres,
             "duration": movie_data['duration'],
+            "genres": genres,
             "writers": writers,
             "directors": directors,
             "cast": cast,
-            "sources": sources
+            "poster_small": movie_data['poster_120x171'],
+            "poster_medium": movie_data['poster_240x342'],
+            "poster_large": movie_data['poster_400x570'],
+            "web_sources": web_sources,
+            "ios_sources": ios_sources,
+            "android_sources": android_sources,
+            "trailers": movie_data['trailers']
         }
         self.logger.info('Succesfully retrieved movie %d: %s', movie_id, movie['title'])
         return movie

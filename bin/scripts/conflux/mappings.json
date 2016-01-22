@@ -13,6 +13,10 @@
         "title": {
           "type": "string"
         },
+        "overview": {
+          "type": "string",
+          "analyzer": "english"
+        },
         "release_year": {
           "type": "date",
           "format": "yyyy"
@@ -25,28 +29,12 @@
           "type": "string",
           "index": "not_analyzed"
         },
-        "overview": {
-          "type": "string",
-          "analyzer": "english"
-        },
-        "poster_small": {
-          "type": "string",
-          "index": "no"
-        },
-        "poster_medium": {
-          "type": "string",
-          "index": "no"
-        },
-        "poster_large": {
-          "type": "string",
-          "index": "no"
+        "duration": {
+          "type": "integer"
         },
         "genres": {
           "type": "string",
           "index": "not_analyzed"
-        },
-        "duration": {
-          "type": "integer"
         },
         "writers": {
           "type": "string",
@@ -75,9 +63,141 @@
             }
           }
         },
-        "sources": {
+        "poster_small": {
           "type": "string",
-          "index": "not_analyzed"
+          "index": "no"
+        },
+        "poster_medium": {
+          "type": "string",
+          "index": "no"
+        },
+        "poster_large": {
+          "type": "string",
+          "index": "no"
+        },
+        "web_sources": {
+          "properties": {
+            "source": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "display_name": {
+              "type": "string",
+              "index": "no"
+            },
+            "link": {
+              "type": "string",
+              "index": "no"
+            }
+          }
+        },
+        "ios_sources": {
+          "properties": {
+            "source": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "display_name": {
+              "type": "string",
+              "index": "no"
+            },
+            "link": {
+              "type": "string",
+              "index": "no"
+            }
+          }
+        },
+        "android_sources": {
+          "properties": {
+            "source": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "display_name": {
+              "type": "string",
+              "index": "no"
+            },
+            "link": {
+              "type": "string",
+              "index": "no"
+            }
+          }
+        },
+        "trailers": {
+          "properties": {
+            "web": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "source": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "display_name": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "link": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "embed": {
+                  "type": "string",
+                  "index": "no"
+                }
+              }
+            },
+            "ios": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "source": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "display_name": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "link": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "embed": {
+                  "type": "string",
+                  "index": "no"
+                }
+              }
+            },
+            "android": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "source": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "display_name": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "link": {
+                  "type": "string",
+                  "index": "no"
+                },
+                "embed": {
+                  "type": "string",
+                  "index": "no"
+                }
+              }
+            }
+          }
         }
       }
     }

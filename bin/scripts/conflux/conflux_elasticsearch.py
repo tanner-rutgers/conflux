@@ -2,6 +2,7 @@ import logging
 import json
 import os
 from elasticsearch import Elasticsearch
+from elasticsearch.client import IndicesClient
 
 
 class ConfluxElasticsearch:
@@ -33,6 +34,9 @@ class ConfluxElasticsearch:
         self.logger.info("creating index '%s' with: %s", self.__INDEX_NAME, mapping)
         res = self.es.indices.create(index=self.__INDEX_NAME, body=mapping)
         self.logger.info("index creation result: %s", res)
+        indicesClient = IndicesClient(self.es)
+        res = indicesClient.get_mapping(index=self.__INDEX_NAME)
+        self.logger.info("index mappings: %s", res)
 
     def bulk_index_movies(self, movies):
         """
