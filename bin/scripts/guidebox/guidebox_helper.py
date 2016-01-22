@@ -26,9 +26,11 @@ class GuideboxHelper:
         self.logger.info('GuideboxHelper get_all_movies (max_count=%d)')
         self.update_timestamp()
         index = 0
+        max_count = int(max_count)
         all_movies = []
-        while max_count is None or index < int(max_count):
-            response = self.guidebox.get_movies(index, 250)
+        while max_count is None or index < max_count:
+            amount_to_grab = (max_count - index) if max_count - index < 250 else 250
+            response = self.guidebox.get_movies(index, amount_to_grab)
             movies = response['results']
             for result in movies:
                 movie = self.get_movie(result['id'])
