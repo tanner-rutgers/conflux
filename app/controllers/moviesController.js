@@ -14,22 +14,21 @@ function MoviesController() {
  * Search all fields (title, overview, cast, writers, directors) for the given query string,
  * with optional additional filters
  * @param query Query string to search for
- * @param filters Array of { field: [values] } objects to filter
+ * @param filterBody Object containing single property for each filter
  * @param callback Typical callback(err, res) - res will contain a MoviesResponse object with search results
  */
-MoviesController.prototype.searchAll = function(queryString, filters, from, size, callback) {
-    logger.info("Movies.searchAll query=%s, filters=%j, from: %d, size: %d", queryString, filters, from, size, {});
+MoviesController.prototype.searchAll = function(queryString, filterBody, from, size, callback) {
+    logger.info("Movies.searchAll query=%s, filters=%j, from: %d, size: %d", queryString, filterBody, from, size, {});
     var query = queryString ? {
         multi_match: {
             query: queryString,
-            fields: ["title^4", "overview^2", "cast", "writers", "directors"]
+            fields: ["title^8", "overview^4", "cast^2", "writers", "directors"],
+            type: "phrase"
         }
     } : {
         match_all: {}
     };
-    var search_filters = filters ? filters.map(function(filter) {
-        return { terms: filter };
-    }) : [];
+    var search_filters = getFilters(filterBody);
     var search_body = {
         query: {
             filtered: {
@@ -42,6 +41,7 @@ MoviesController.prototype.searchAll = function(queryString, filters, from, size
             }
         }
     };
+    logger.info("Searching with %s, from %d, size %d", search_body, from, size);
     this.elasticsearchController.search(search_body, from, size, function(err, res) {
         if (err) {
             logger.error("Error performing searchAll", err);
@@ -58,5 +58,23 @@ MoviesController.prototype.searchAll = function(queryString, filters, from, size
         callback(null, moviesResponse);
     })
 };
+
+/**
+ * Retrieve filters
+ * @param request
+ * @returns {Array}
+ */
+function getFilters(filterBody) {
+    var filters = [];
+    for (var propName in filterBody) {
+        if (filterBody.hasOwnProperty(propName)) {
+            var filter = {};
+            filter[propName] = filterBody[propName];
+            var terms = { terms: filter };
+            filters.push(terms);
+        }
+    }
+    return filters;
+}
 
 module.exports = MoviesController;
