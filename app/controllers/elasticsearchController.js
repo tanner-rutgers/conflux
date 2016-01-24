@@ -23,17 +23,39 @@ function ElasticsearchController() {
  * @param callback Typical callback function(err, res) - res will contain the unmodified elasticsearch response
  */
 ElasticsearchController.prototype.search = function(search_body, from, size, callback) {
-    var search_config = {
+    var search_body = {
         index: INDEX,
         type: TYPE,
         from: from || FROM_DEFAULT,
         size: size || SIZE_DEFAULT,
         body: search_body
     };
-    logger.info("Sending %j search to elasticsearch", search_config, {});
-    this.client.search(search_config, function(err, res) {
+    logger.info("Sending %j search to elasticsearch", search_body, {});
+    this.client.search(search_body, function(err, res) {
         if (err) {
             logger.error("Error performing search", err);
+            return callback(err);
+        }
+
+        callback(null, res);
+    })
+};
+
+/**
+ * Retrieve a single movie with the given id
+ * @param movie_id ID of movie to retrieve
+ * @param callback Typical callback function(err, res) - res will contain the unmodified elasticsearch response
+ */
+ElasticsearchController.prototype.getMovie = function(movie_id, callback) {
+    var search_body = {
+        index: INDEX,
+        type: TYPE,
+        id: movie_id
+    };
+    logger.info("Sending %j request to elasticsearch", search_body, {});
+    this.client.get(search_body, function(err, res) {
+        if (err) {
+            logger.error("Error performing get", err);
             return callback(err);
         }
 

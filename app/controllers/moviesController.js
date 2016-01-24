@@ -100,6 +100,25 @@ MoviesController.prototype.getRandom = function(filterBody, callback) {
 };
 
 /**
+ * Retrieve a single movie with the given id
+ * @param movie_id Id of movie to retrieve
+ * @param callback Typical callback(err, res) - res will contain a single movie object or null if not found
+ */
+MoviesController.prototype.getMovie = function(movie_id, callback) {
+    logger.info("Movies.getMovie movie_id=%s", movie_id, {});
+    this.elasticsearchController.getMovie(movie_id, function(err, res) {
+        if (err) {
+            logger.error("Error getting movie", err);
+            return callback(err);
+        }
+
+        var movie = res._source;
+        logger.info("Movies.getMovie success - returned %s", res);
+        callback(null, movie);
+    })
+};
+
+/**
  * Retrieve filters
  * @param request
  * @returns {Array}
