@@ -14,7 +14,7 @@ function MoviesController() {
  * Search all fields (title, overview, cast, writers, directors) for the given query string,
  * with optional additional filters
  * @param query Query string to search for
- * @param filterBody Object containing single property for each filter
+ * @param filterBody Object containing properties for each filter
  * @param callback Typical callback(err, res) - res will contain a MoviesResponse object with search results
  */
 MoviesController.prototype.searchAll = function(queryString, filterBody, from, size, callback) {
@@ -44,7 +44,7 @@ MoviesController.prototype.searchAll = function(queryString, filterBody, from, s
     logger.info("Searching with %s, from %d, size %d", search_body, from, size);
     this.elasticsearchController.search(search_body, from, size, function(err, res) {
         if (err) {
-            logger.error("Error performing searchAll", err);
+            logger.error("Error performing search", err);
             return callback(err);
         }
 
@@ -55,6 +55,46 @@ MoviesController.prototype.searchAll = function(queryString, filterBody, from, s
         var resultsReturned = results.length;
         logger.info("Movies.searchAll success - found %d - returning %d from %d", resultsTotal, resultsReturned, from);
         var moviesResponse = new MoviesResponse(results, resultsTotal, from);
+        callback(null, moviesResponse);
+    })
+};
+
+/**
+ * Retrieve a single random movie that conforms to the given optional filters
+ * @param filterBody Object containing properties for each filter (ex// { "sources.source": "hulu_plus" })
+ * @param callback Typicall callback(err, res) - res will contain a MovieResponse object with single movie
+ */
+MoviesController.prototype.getRandom = function(filterBody, callback) {
+    logger.info("Movies.getRandom filter=%j", filterBody, {});
+    var search_filters = getFilters(filterBody);
+    var search_body = {
+        query: {
+            function_score: {
+                filter: {
+                    bool: {
+                        must: search_filters
+                    }
+                },
+                functions: [
+                    {
+                        random_score: {}
+                    }
+                ],
+                score_mode: "sum"
+            }
+        }
+    };
+    this.elasticsearchController.search(search_body, 0, 1, function(err, res) {
+        if (err) {
+            logger.error("Error performing search", err);
+            return callback(err);
+        }
+
+        var results = res.hits.hits.map(function(hit) {
+            return hit._source;
+        });
+        logger.info("Movies.getRandom success - returned %s", results);
+        var moviesResponse = new MoviesResponse(results, null, null);
         callback(null, moviesResponse);
     })
 };
