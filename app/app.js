@@ -14,7 +14,12 @@ app.use(morgan('[:date[web]] :method url: :url, content-type: :res[content-type]
 // Basic configuration
 app.use(bodyParser.json());
 
-// Routes setup
+// Frontend page
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+// API Routes setup
 logger.info("Configuring routes");
 var apiRouter = require('./routes/api');
 app.use('/api', apiRouter);
@@ -24,7 +29,7 @@ app.use(logErrors);
 app.use(errorHandler);
 
 function logErrors(err, req, res, next) {
-    logger.error("Application error", err.stack);
+    logger.error("Application error: ", err);
     next(err);
 }
 

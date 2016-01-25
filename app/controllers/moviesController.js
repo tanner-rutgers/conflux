@@ -1,4 +1,5 @@
 var logger = require('../utils/logger');
+var VError = require('verror');
 var ElasticsearchController = require('./elasticsearchController');
 var MoviesResponse = require('../models/moviesResponse');
 
@@ -44,8 +45,7 @@ MoviesController.prototype.searchAll = function(queryString, filterBody, from, s
     logger.info("Searching with %s, from %d, size %d", search_body, from, size);
     this.elasticsearchController.search(search_body, from, size, function(err, res) {
         if (err) {
-            logger.error("Error performing search", err);
-            return callback(err);
+            return callback(new VError(err, "elasticsearchController.search(%s, %d, %d) failed", search_body, from, size));
         }
 
         var results = res.hits.hits.map(function(hit) {
@@ -86,8 +86,7 @@ MoviesController.prototype.getRandom = function(filterBody, callback) {
     };
     this.elasticsearchController.search(search_body, 0, 1, function(err, res) {
         if (err) {
-            logger.error("Error performing search", err);
-            return callback(err);
+            return callback(new VError(err, "elasticsearchController.search(%s, 0, 1) failed", search_body));
         }
 
         var results = res.hits.hits.map(function(hit) {
@@ -108,8 +107,7 @@ MoviesController.prototype.getMovie = function(movie_id, callback) {
     logger.info("Movies.getMovie movie_id=%s", movie_id, {});
     this.elasticsearchController.getMovie(movie_id, function(err, res) {
         if (err) {
-            logger.error("Error getting movie", err);
-            return callback(err);
+            return callback(new VError(err, "elasticsearchController.getMovie(%d) failed", movie_id));
         }
 
         var movie = res._source;

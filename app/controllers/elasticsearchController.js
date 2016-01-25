@@ -1,5 +1,6 @@
 var elasticsearch = require('elasticsearch');
 var logger = require('../utils/logger');
+var VError = require('verror');
 
 var HOST = 'localhost:9200';
 var INDEX = 'conflux';
@@ -33,8 +34,7 @@ ElasticsearchController.prototype.search = function(search_body, from, size, cal
     logger.info("Sending %j search to elasticsearch", search_body, {});
     this.client.search(search_body, function(err, res) {
         if (err) {
-            logger.error("Error performing search", err);
-            return callback(err);
+            return callback(new VError(err, "elasticsearch client.search(%j) failed", search_body));
         }
 
         callback(null, res);
@@ -55,8 +55,7 @@ ElasticsearchController.prototype.getMovie = function(movie_id, callback) {
     logger.info("Sending %j request to elasticsearch", search_body, {});
     this.client.get(search_body, function(err, res) {
         if (err) {
-            logger.error("Error performing get", err);
-            return callback(err);
+            return callback(new VError(err, "elasticsearch client.get(%j) failed", search_body));
         }
 
         callback(null, res);
