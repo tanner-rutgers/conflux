@@ -15,7 +15,7 @@ router.post('/movies/search', function (request, response, next) {
     var from = request.query.from;
     var size = request.query.size;
     var random = request.query.random == true;
-    if (random) {
+    if (!random) {
         controller.searchAll(query, request.body, from, size, function (err, res) {
             if (err) {
                 return next(new VError(err, "MoviesController.searchAll(%s, %s, %d, %d) failed", query, request.body, from, size));
