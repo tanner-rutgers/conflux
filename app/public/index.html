@@ -3,25 +3,54 @@
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-select/0.14.9/select.min.css">
 
-    <script src="javascript/modules/app.js"></script>
-    <script src="javascript/controllers/searchController.js"></script>
-    <script src="javascript/factories/movies.js"></script>
+    <!--[if lt IE 9]>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js"></script>
+    <script>
+        document.createElement('ui-select');
+        document.createElement('ui-select-match');
+        document.createElement('ui-select-choices');
+    </script>
+    <![endif]-->
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+    <script type="text/javascript" src="js/angularjs-dropdown-multiselect.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-select/0.14.9/select.min.js"></script>
+    <script type="text/javascript" src="js/modules/app.js"></script>
+    <script type="text/javascript" src="js/controllers/searchController.js"></script>
+    <script type="text/javascript" src="js/factories/movies.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
 </head>
 
 <body ng-controller="SearchController">
 <div class="container-fluid">
     <div class="row-fluid">
-        <span class="span3">
-            <input class="input-block-level" ng-model="queryTerm" type="text">
-        </span>
+        <input class="input-block-level" ng-model="searchTerm" type="text">
         <button ng-click="search()" class="btn" type="button">Search</button>
     </div>
 
     <div class="row-fluid">
-        <div class="span4">
-            <img ng-repeat="movie in movies" ng-src="{{movie.poster_large}}"/>
+        <form class="form-inline">
+            <div ng-dropdown-multiselect="" options="genreSelect.availableGenres"
+                 selected-model="genreSelect.selectedGenres" checkboxes="true" extra-settings="genreSelect.extraSettings"
+                 translation-texts="genreSelect.translationTexts"></div>
+            <ui-select multiple ng-model="castSelect.selectedCast" theme="bootstrap" style="width: 300px">
+                <ui-select-match placeholder="Select actors...">{{$item}}</ui-select-match>
+                <ui-select-choices refresh="getCast($select.search)" refresh-delay="500" repeat="actor in castSelect.availableCast | filter: $select.search">
+                    {{actor}}
+                </ui-select-choices>
+            </ui-select>
+        </form>
+    </div>
+
+    <div class="row-fluid">
+        <div ng-repeat="movie in movies">
+            <img ng-src="{{movie.poster_large}}"/>
         </div>
     </div>
 </div>

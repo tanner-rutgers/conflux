@@ -19,7 +19,7 @@ function MoviesController() {
  * @param callback Typical callback(err, res) - res will contain a MoviesResponse object with search results
  */
 MoviesController.prototype.searchAll = function(queryString, filterBody, from, size, callback) {
-    logger.info("Movies.searchAll query=%s, filters=%j, from: %d, size: %d", queryString, filterBody, from, size, {});
+    logger.info("MoviesController.searchAll query=%s, filters=%j, from: %d, size: %d", queryString, filterBody, from, size, {});
     var query = queryString ? {
         multi_match: {
             query: queryString,
@@ -65,7 +65,7 @@ MoviesController.prototype.searchAll = function(queryString, filterBody, from, s
  * @param callback Typicall callback(err, res) - res will contain a MovieResponse object with single movie
  */
 MoviesController.prototype.getRandom = function(filterBody, callback) {
-    logger.info("Movies.getRandom filter=%j", filterBody, {});
+    logger.info("MoviesController.getRandom filter=%j", filterBody, {});
     var search_filters = getFilters(filterBody);
     var search_body = {
         query: {
@@ -104,7 +104,7 @@ MoviesController.prototype.getRandom = function(filterBody, callback) {
  * @param callback Typical callback(err, res) - res will contain a single movie object or null if not found
  */
 MoviesController.prototype.getMovie = function(movie_id, callback) {
-    logger.info("Movies.getMovie movie_id=%s", movie_id, {});
+    logger.info("MoviesController.getMovie movie_id=%s", movie_id, {});
     this.elasticsearchController.getMovie(movie_id, function(err, res) {
         if (err) {
             return callback(new VError(err, "elasticsearchController.getMovie(%d) failed", movie_id));
@@ -113,6 +113,49 @@ MoviesController.prototype.getMovie = function(movie_id, callback) {
         var movie = res._source;
         logger.info("Movies.getMovie success - returned %s", res);
         callback(null, movie);
+    })
+};
+
+/**
+ * Retrieve all actors
+ * @param callback Typical callback(err, res) - res will contain an array of actor names
+ */
+MoviesController.prototype.getActors = function(search_term, callback) {
+    logger.info("MoviesController.getActors");
+    this.getValues("cast.name.raw", search_term, callback);
+};
+
+/**
+ * Retrieve all genres
+ * @param callback Typical callback(err, res) - res will contain an array of genres
+ */
+MoviesController.prototype.getGenres = function(callback) {
+    logger.info("MoviesController.getGenres");
+    this.getValues("genres", null, callback);
+};
+
+/**
+ * Retrieve all unique values for the given field
+ * @param field Field name to retrieve unique values of
+ * @param filter String to filter values by, null if no filter desired
+ * @param callback Typical callback(err, res) - res will contain an array of the unique values
+ */
+MoviesController.prototype.getValues = function(field, filter, callback) {
+    this.elasticsearchController.getValues(field, function(err, res) {
+        if (err) {
+            return callback(new VError(err, "elasticsearchController.getValues(%s) failed", field));
+        }
+
+        var buckets = res.aggregations.agg.buckets;
+        if (filter) {
+            buckets = buckets.filter(function(bucket) {
+                return bucket.key.indexOf(filter) > -1;
+            })
+        }
+        var values = buckets.map(function(bucket) {
+            return bucket.key;
+        });
+        callback(null, values);
     })
 };
 

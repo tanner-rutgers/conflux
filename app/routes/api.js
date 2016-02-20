@@ -50,4 +50,25 @@ router.get('/movies/:id', function (request, response, next) {
     })
 });
 
+router.get('/cast', function (request, response, next) {
+    var search = request.query.search;
+    controller.getActors(search, function(err, res) {
+        if (err) {
+            return next(new VError(err, "MoviesController.getActors() failed"));
+        } else {
+            response.status(200).send(res);
+        }
+    })
+});
+
+router.get('/genres', function (request, response, next) {
+    controller.getGenres(function(err, res) {
+        if (err) {
+            return next(new VError(err, "MoviesController.getGenres() failed"));
+        } else {
+            response.status(200).send(res);
+        }
+    })
+});
+
 module.exports = router;

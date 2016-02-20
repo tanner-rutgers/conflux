@@ -62,4 +62,36 @@ ElasticsearchController.prototype.getMovie = function(movie_id, callback) {
     })
 };
 
+/**
+ * Retrieve all unique values for the given field
+ * @param field Field name for which to retrieve unique values
+ * @param callback Typical callback function(err, res) - res will contain the unmodified elasticsearch response
+ */
+ElasticsearchController.prototype.getValues = function(field, callback) {
+    var search_body = {
+        index: INDEX,
+        type: TYPE,
+        body: {
+            size: 0,
+            aggs: {
+                agg: {
+                    terms: {
+                        field: field,
+                        order: { "_term" : "asc" },
+                        size: 0
+                    }
+                }
+            }
+        }
+    };
+    logger.info("Sending %j request to elasticsearch", search_body, {});
+    this.client.search(search_body, function(err, res) {
+        if (err) {
+            return callback(new VError(err, "elasticsearch client.search(%j) failed", search_body));
+        }
+
+        callback(null, res);
+    })
+};
+
 module.exports = ElasticsearchController;

@@ -51,10 +51,10 @@ class GuideboxHelper:
         """
         self.logger.info('GuideboxHelper get_movie: %d', movie_id)
         movie_data = self.guidebox.get_movie(movie_id)
-        genres = [genre['title'] for genre in movie_data['genres']]
-        writers = [writer['name'] for writer in movie_data['writers']]
-        directors = [director['name'] for director in movie_data['directors']]
-        cast = [{"name": cast['name'], "character": cast['character_name']} for cast in movie_data['cast']]
+        genres = [genre['title'].strip() for genre in movie_data['genres']]
+        writers = [writer['name'].strip() for writer in movie_data['writers']]
+        directors = [director['name'].strip() for director in movie_data['directors']]
+        cast = [{"name": cast['name'].strip(), "character": cast['character_name'].strip()} for cast in movie_data['cast']]
         web_sources = movie_data['free_web_sources'] + movie_data['tv_everywhere_web_sources'] + \
                       movie_data['subscription_web_sources'] + movie_data['purchase_web_sources']
         ios_sources = movie_data['free_ios_sources'] + movie_data['tv_everywhere_ios_sources'] + \
@@ -64,7 +64,7 @@ class GuideboxHelper:
         movie = {
             "id": movie_id,
             "imdb": movie_data['imdb'],
-            "title": movie_data['title'],
+            "title": movie_data['title'].strip(),
             "overview": movie_data['overview'],
             "release_year": movie_data['release_year'],
             "release_date": movie_data['release_date'],
